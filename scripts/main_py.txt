@@ -1,0 +1,68 @@
+from flask import Flask, jsonify
+import sqlalchemy
+from sqlalchemy import text
+
+app = Flask(__name__)
+
+# --- ARCHITECTURE CONFIGURATION ---
+# Using your specific Private IP and Reset Password
+DB_HOST = "10.10.1.3" 
+DB_USER = "mileski_user"
+DB_PASS = "Testing123!"
+DB_NAME = "cis4355_db" 
+
+# Setup the database engine using the PyMySQL driver
+# pool_pre_ping ensures the infrastructure connection is alive before every request
+engine = sqlalchemy.create_engine(
+    f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}",
+    pool_pre_ping=True
+)
+
+@app.route('/')
+def home():
+    """Application Tier Identity Proof"""
+    return jsonify({
+        "status": "Online",
+        "tier": "Application Tier (Backend VM)",
+        "message": "Infrastructure Reachable"
+    })
+
+@app.route('/db-test')
+def db_test():
+    """Data Tier Connectivity Proof: Verifies Write/Read via Private IP"""
+    try:
+        with engine.connect() as conn:
+            # 1. Create a verification table if it doesn't exist
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS infra_verification (
+                    id INT AUTO_INCREMENT PRIMARY KEY, 
+                    log_msg VARCHAR(255), 
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """))
+            
+            # 2. Insert a row to prove WRITE access through the firewall
+            conn.execute(text("INSERT INTO infra_verification (log_msg) VALUES ('Private Network Path Verified')"))
+            conn.commit()
+            
+            # 3. Read it back to prove READ access through the firewall
+            result = conn.execute(text("SELECT * FROM infra_verification ORDER BY id DESC LIMIT 1")).fetchone()
+            
+            return jsonify({
+                "status": "Success",
+                "connectivity": "Private Subnet -> Cloud SQL Bridge Verified",
+                "database_response": {
+                    "id": result[0],
+                    "message": result[1],
+                    "timestamp": str(result[2])
+                }
+            })
+    except Exception as e:
+        return jsonify({
+            "status": "Infrastructure Error",
+            "detail": str(e)
+        }), 500
+
+if __name__ == '__main__':
+    # Listen on all internal interfaces (0.0.0.0) so the Frontend/Load Balancer can find it
+    app.run(host='0.0.0.0', port=5000)
