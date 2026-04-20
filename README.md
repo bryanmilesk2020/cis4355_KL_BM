@@ -19,3 +19,7 @@ database, all protected by a WAF and CDN.
 | Cloud IAM | Create users and service accounts with specific roles |
 | Cloud Logging | Documents actions on VM instance |
 | Secret Manager | Store the SQL database password, hardening the environment |
+
+## Security Summary
+
+We used GCP's Secret Manager to store and hash the database name, password, and database username so it doesn't have to be hardcoded on the backend code on the vm instance, adding an extra layer of security.
