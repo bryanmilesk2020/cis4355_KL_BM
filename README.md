@@ -10,12 +10,12 @@ database, all protected by a WAF and CDN.
 | Service | Purpose |
 | -------- | -------- |
 | VPC Network | To host the VM instance and database instance |
-| Cloud Load Balancer | Row 2, Col 2 |
-| Compute Engine | To create a VM instance |
-| Cloud SQL | Row 4, Col 2 |
-| Cloud Storage | Row 5, Col 2 |
-| Cloud CDN | Row 6, Col 2 |
-| Cloud Armor | Row 7, Col 2 | 
-| Cloud IAM | Row 8, Col 2 |
-| Cloud Logging | Row 9, Col 2 |
-| Secret Manager | Row 10, Col 2 |
+| Cloud Load Balancer | Directs ingress traffic to either the VM instance or bucket |
+| Compute Engine | To create a VM instance that handles user requests |
+| Cloud SQL | To store any application data, independently from the VM instance |
+| Cloud Storage | Create a bucket that can store static assets/heavy files, so the VM doesn't have to store them and operate more efficiently |
+| Cloud CDN | Can handle any simple, repetitive requests, taking the load off the VM instance or bucket |
+| Cloud Armor | Protects the VM, blocks traffic on all other ports, but checks who comes through http (port 80) | 
+| Cloud IAM | Create users and service accounts with specific roles |
+| Cloud Logging | Documents actions on VM instance |
+| Secret Manager | Store the SQL database password, hardening the environment |
