@@ -7,7 +7,15 @@ database, all protected by a WAF and CDN.
 
 ## Services Used
 
-| Header 1 | Header 2 |
+| Service | Purpose |
 | -------- | -------- |
-| Row 1, Col 1 | Row 1, Col 2 |
-| Row 2, Col 1 | Row 2, Col 2 |
+| VPC Network | To host the VM instance and database instance |
+| Cloud Load Balancer | Row 2, Col 2 |
+| Compute Engine | To create a VM instance |
+| Cloud SQL | Row 4, Col 2 |
+| Cloud Storage | Row 5, Col 2 |
+| Cloud CDN | Row 6, Col 2 |
+| Cloud Armor | Row 7, Col 2 | 
+| Cloud IAM | Row 8, Col 2 |
+| Cloud Logging | Row 9, Col 2 |
+| Secret Manager | Row 10, Col 2 |
