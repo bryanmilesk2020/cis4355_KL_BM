@@ -22,4 +22,4 @@ database, all protected by a WAF and CDN.
 
 ## Security Summary
 
-We used GCP's Secret Manager to store and hash the database name, password, and database username so it doesn't have to be hardcoded on the backend code on the vm instance, adding an extra layer of security.
+We used GCP's Secret Manager to store and hash the database name, password, and database username so it doesn't have to be hardcoded on the backend code on the vm instance, adding an extra layer of security. We also configured a cloud armor policy, cis4355-waf-policy, to address or partially address some web attacks such as SQL injections, broken access control, and SSRF.
