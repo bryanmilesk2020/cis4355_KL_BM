@@ -3,7 +3,7 @@
 ### Service Account Details
 **Service Account Name:** `web-app-backend-sa`
 
-### Roles Assigned & Rationale
+### Roles Assigned 
 
 | Role | Purpose / Why |
 | :--- | :--- |
