@@ -1,15 +1,24 @@
+from google.cloud import secretmanager
 from flask import Flask, jsonify
 import sqlalchemy
 from sqlalchemy import text
 
 app = Flask(__name__)
 
+#--- SECRET MANAGER INTEGRATION ---
+def get_secret(secret_id):
+        """Fetch a secret value from GCP secret manager at runtime"""
+        client = secretmanager.SecretManagerServiceClient()
+        name = f"projects/cis4355-bm-kl/secrets/{secret_id}/versions/latest"
+        response = client.access_secret_version(request={"name": name})
+        return response.payload.data.decode("UTF-8")
+
 # --- ARCHITECTURE CONFIGURATION ---
-# Using your specific Private IP and Reset Password
+# fetched at runtime
 DB_HOST = "10.10.1.3" 
-DB_USER = "mileski_user"
-DB_PASS = "Testing123!"
-DB_NAME = "cis4355_db" 
+DB_USER = get_secret("db-user")
+DB_PASS = get_secret("db-pass")
+DB_NAME = get_secret("db-name")
 
 # Setup the database engine using the PyMySQL driver
 # pool_pre_ping ensures the infrastructure connection is alive before every request
