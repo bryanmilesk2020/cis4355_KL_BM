@@ -3,7 +3,7 @@
 ## Secure multi-tier web application
 
 Goal: Design & deploy a multi-tier web application with a public-facing frontend, a private application backend, and a managed
-database, all protected by a WAF and CDN.
+database, all protected by a WAF with a CDN to cache static assets.
 
 ## Services Used
 
