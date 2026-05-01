@@ -1,3 +1,4 @@
+#Gives VM instance ability to function as a web server, talk to Secret Manager, and connect to the database
 from google.cloud import secretmanager
 from flask import Flask, jsonify
 import sqlalchemy
@@ -7,14 +8,14 @@ app = Flask(__name__)
 
 #--- SECRET MANAGER INTEGRATION ---
 def get_secret(secret_id):
-        """Fetch a secret value from GCP secret manager at runtime"""
+        #Fetch a secret value from GCP secret manager at runtime
         client = secretmanager.SecretManagerServiceClient()
         name = f"projects/cis4355-bm-kl/secrets/{secret_id}/versions/latest"
         response = client.access_secret_version(request={"name": name})
         return response.payload.data.decode("UTF-8")
 
-# --- ARCHITECTURE CONFIGURATION ---
-# fetched at runtime
+# --- DATABASE CREDENTIALS ---
+# fetched at runtime from Secret Manager
 DB_HOST = "10.10.1.3" 
 DB_USER = get_secret("db-user")
 DB_PASS = get_secret("db-pass")
@@ -27,6 +28,7 @@ engine = sqlalchemy.create_engine(
     pool_pre_ping=True
 )
 
+#whenever user vistis / the following JSON response follows, verifying connectivity with Flask aka Application tier
 @app.route('/')
 def home():
     """Application Tier Identity Proof"""
@@ -36,6 +38,8 @@ def home():
         "message": "Infrastructure Reachable"
     })
 
+#whenever user visits /db-test in URL it returns the following JSON response and also adds that entry to the database instance
+#proves that the load balancer aka static tier, web server aka application tier, and database instance aka data tier can all connect
 @app.route('/db-test')
 def db_test():
     """Data Tier Connectivity Proof: Verifies Write/Read via Private IP"""
